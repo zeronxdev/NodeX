@@ -14,7 +14,7 @@ Hỗ trợ các giao thức V2ay, Trojan, Shadowsocks, dễ dàng mở rộng v�
 Nếu bạn thích dự án này, bạn có thể nhấp vào Star+Watch ở góc trên bên phải để tiếp tục chú ý đến tiến trình của dự án này.
 
 ## Tài liệu
-Sử dụng hướng dẫn: [Hướng dẫn chi tiết](https://xrayr-project.github.io/XrayR-doc/) ( Tiếng Trung )
+[Hướng dẫn sử dụng](https://xrayr-project.github.io/XrayR-doc/) ( Tiếng Trung )
 
 ## Tuyên bố miễn trừ
 
@@ -62,10 +62,10 @@ Dự án này chỉ là học tập và phát triển và bảo trì cá nhân c
 
 ## Cài đặt phần mềm
 
-### Một cài đặt chính
+### Lệnh cài đặt
 
 ```
-wget -N https://raw.githubusercontent.com/zeronxdev/NodeX-install/master/install.sh && bash install.sh
+bash <(curl -Ls https://raw.githubusercontent.com/zeronxdev/NodeX-install/main/install.sh)
 ```
 
 
