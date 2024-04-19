@@ -53,7 +53,7 @@ Dự án này chỉ là học tập và phát triển và bảo trì cá nhân c
 
 | Panel                                                     | v2ray | trojan | shadowsocks             |
 |--------------------------------------------------------|-------|--------|-------------------------|
-| sspanel-uim                                            | √     | √      | √ |
+| sspanel                                            | √     | √      | √ |
 | v2board                                                | √     | √      | √                       |
 | [PMPanel](https://github.com/ByteInternetHK/PMPanel)   | √     | √      | √                       |
 | [ProxyPanel](https://github.com/ProxyPanel/ProxyPanel) | √     | √      | √                       |
