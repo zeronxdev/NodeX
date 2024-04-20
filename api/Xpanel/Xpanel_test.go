@@ -3,8 +3,8 @@ package Xpanel_test
 import (
 	"testing"
 
-	"github.com/wyx2685/XrayR/api"
-	"github.com/wyx2685/XrayR/api/Xpanel"
+	"github.com/zeronxdev/NodeX/api"
+	"github.com/zeronxdev/NodeX/api/Xpanel"
 )
 
 func CreateClient() api.API {

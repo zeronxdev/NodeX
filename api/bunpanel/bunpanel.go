@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
-	"github.com/wyx2685/XrayR/api"
+	"github.com/zeronxdev/NodeX/api"
 	"os"
 	"reflect"
 	"regexp"

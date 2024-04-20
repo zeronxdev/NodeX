@@ -6,10 +6,10 @@ import (
 	"os"
 	"sync"
 
-	"github.com/wyx2685/XrayR/api/bunpanel"
-	"github.com/wyx2685/XrayR/api/newV2board"
-	"github.com/wyx2685/XrayR/app/mydispatcher"
-	"github.com/wyx2685/XrayR/api/Xpanel"
+	"github.com/zeronxdev/NodeX/api/bunpanel"
+	"github.com/zeronxdev/NodeX/api/newV2board"
+	"github.com/zeronxdev/NodeX/app/mydispatcher"
+	"github.com/zeronxdev/NodeX/api/Xpanel"
 
 	"dario.cat/mergo"
 	"github.com/r3labs/diff/v2"
@@ -19,13 +19,13 @@ import (
 	"github.com/xtls/xray-core/core"
 	"github.com/xtls/xray-core/infra/conf"
 
-	"github.com/wyx2685/XrayR/api"
-	"github.com/wyx2685/XrayR/api/pmpanel"
-	"github.com/wyx2685/XrayR/api/proxypanel"
-	"github.com/wyx2685/XrayR/api/sspanel"
-	_ "github.com/wyx2685/XrayR/cmd/distro/all"
-	"github.com/wyx2685/XrayR/service"
-	"github.com/wyx2685/XrayR/service/controller"
+	"github.com/zeronxdev/NodeX/api"
+	"github.com/zeronxdev/NodeX/api/pmpanel"
+	"github.com/zeronxdev/NodeX/api/proxypanel"
+	"github.com/zeronxdev/NodeX/api/sspanel"
+	_ "github.com/zeronxdev/NodeX/cmd/distro/all"
+	"github.com/zeronxdev/NodeX/service"
+	"github.com/zeronxdev/NodeX/service/controller"
 )
 
 // Panel Structure

@@ -26,8 +26,8 @@ import (
 	"github.com/xtls/xray-core/transport"
 	"github.com/xtls/xray-core/transport/pipe"
 
-	"github.com/wyx2685/XrayR/common/limiter"
-	"github.com/wyx2685/XrayR/common/rule"
+	"github.com/zeronxdev/NodeX/common/limiter"
+	"github.com/zeronxdev/NodeX/common/rule"
 )
 
 var errSniffingTimeout = newError("timeout on sniffing")
