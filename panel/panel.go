@@ -7,9 +7,9 @@ import (
 	"sync"
 
 	"github.com/wyx2685/XrayR/api/bunpanel"
-	"github.com/wyx2685/XrayR/api/gov2panel"
 	"github.com/wyx2685/XrayR/api/newV2board"
 	"github.com/wyx2685/XrayR/app/mydispatcher"
+	"github.com/wyx2685/XrayR/api/Xpanel"
 
 	"dario.cat/mergo"
 	"github.com/r3labs/diff/v2"
@@ -23,7 +23,6 @@ import (
 	"github.com/wyx2685/XrayR/api/pmpanel"
 	"github.com/wyx2685/XrayR/api/proxypanel"
 	"github.com/wyx2685/XrayR/api/sspanel"
-	"github.com/wyx2685/XrayR/api/v2raysocks"
 	_ "github.com/wyx2685/XrayR/cmd/distro/all"
 	"github.com/wyx2685/XrayR/service"
 	"github.com/wyx2685/XrayR/service/controller"
@@ -180,14 +179,12 @@ func (p *Panel) Start() {
 			apiClient = sspanel.New(nodeConfig.ApiConfig)
 		case "NewV2board", "V2board":
 			apiClient = newV2board.New(nodeConfig.ApiConfig)
+		case "Xpanel":
+			apiClient = Xpanel.New(nodeConfig.ApiConfig)	
 		case "PMpanel":
 			apiClient = pmpanel.New(nodeConfig.ApiConfig)
 		case "Proxypanel":
 			apiClient = proxypanel.New(nodeConfig.ApiConfig)
-		case "V2RaySocks":
-			apiClient = v2raysocks.New(nodeConfig.ApiConfig)
-		case "GoV2Panel":
-			apiClient = gov2panel.New(nodeConfig.ApiConfig)
 		case "BunPanel":
 			apiClient = bunpanel.New(nodeConfig.ApiConfig)
 		default:

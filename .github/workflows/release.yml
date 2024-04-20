@@ -11,23 +11,22 @@ on:
       - "go.sum"
       - ".github/workflows/*.yml"
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     paths:
       - "**/*.go"
       - "go.mod"
       - "go.sum"
       - ".github/workflows/*.yml"
   release:
-    types: [ published ]
+    types: [published]
 
 jobs:
-
   build:
     strategy:
       matrix:
         # Include amd64 on all platforms.
-        goos: [ windows, linux, darwin ]
-        goarch: [ amd64, 386 ]
+        goos: [windows, linux, darwin]
+        goarch: [amd64, 386]
         exclude:
           # Exclude i386 on darwin.
           - goarch: 386
@@ -67,11 +66,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '^1.21'
+          go-version: "^1.21"
 
       - name: Get project dependencies
         run: go mod download
-
 
       - name: Build XrayR
         run: |
@@ -96,7 +94,6 @@ jobs:
           max_attempts: 5
           command: |
             cp ${GITHUB_WORKSPACE}/README.md ./build_assets/README.md
-            cp ${GITHUB_WORKSPACE}/LICENSE ./build_assets/LICENSE
             cp ${GITHUB_WORKSPACE}/release/config/dns.json ./build_assets/dns.json
             cp ${GITHUB_WORKSPACE}/release/config/route.json ./build_assets/route.json
             cp ${GITHUB_WORKSPACE}/release/config/custom_outbound.json ./build_assets/custom_outbound.json

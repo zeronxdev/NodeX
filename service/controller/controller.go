@@ -592,7 +592,7 @@ func (c *Controller) userInfoMonitor() (err error) {
 		var nocountUID = make(map[int]struct{})
 		for _, traffic := range userTraffic {
 			total := traffic.Upload + traffic.Download
-			if total < int64(c.config.DeviceOnlineMinTraffic*1000) {
+			if total < int64(c.config.DeviceOnlineMinTraffic*1) {
 				nocountUID[traffic.UID] = struct{}{}
 			}
 		}

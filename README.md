@@ -9,16 +9,16 @@
 
 NodeX - backend framework for XPanel
 
-Hỗ trợ các giao thức V2ay, Trojan, Shadowsocks, dễ dàng mở rộng và hỗ trợ kết nối nhiều người.
+Hỗ trợ các giao thức V2ay, Trojan, Shadowsocks, dễ dàng mở rộng và hỗ trợ kết nối đa thiết bị
 
-Nếu bạn thích dự án này, bạn có thể nhấp vào Star+Watch ở góc trên bên phải để tiếp tục chú ý đến tiến trình của dự án này.
+Nếu bạn thích dự án này, bạn có thể nhấp vào Star+Watch ở góc trên bên phải để theo dõi tiến trình của dự án này.
 
 ## Tài liệu
 [Hướng dẫn sử dụng](https://xrayr-project.github.io/XrayR-doc/) ( Tiếng Trung )
 
 ## Tuyên bố miễn trừ
 
-Dự án này chỉ là học tập và phát triển và bảo trì cá nhân của tôi. Tôi không đảm bảo bất kỳ sự sẵn có nào và không chịu trách nhiệm cho bất kỳ hậu quả nào do việc sử dụng phần mềm này.
+Dự án này chỉ là học tập, phát triển và bảo trì cá nhân của tôi. Tôi không đảm bảo bất kỳ sự sẵn có nào và không chịu trách nhiệm cho bất kỳ hậu quả nào do việc sử dụng phần mềm này.
 
 ## Đặt điểm nổi bật
 
@@ -34,31 +34,32 @@ Dự án này chỉ là học tập và phát triển và bảo trì cá nhân c
 
 ## Chức năng
 
-| Chức năng        | v2ray | trojan | shadowsocks |
-|-----------|-------|--------|-------------|
-| Nhận thông tin Node    | √     | √      | √           |
-| Nhận thông tin người dùng    | √     | √      | √           |
+| Chức năng                        | v2ray | trojan | shadowsocks |
+|----------------------------------|-------|--------|-------------|
+| Giới hạn số IP kết nối           | √     | √      | √           |
+| Giới hạn tốc độ theo người dùng  | √     | √      | √           |
+| Nhận thông tin Node              | √     | √      | √           |
+| Nhận thông tin người dùng        | √     | √      | √           |
 | Thống kê lưu lượng người dùng    | √     | √      | √           |
-| Báo cáo thông tin máy chủ   | √     | √      | √           |
-| Tự động đăng ký chứng chỉ TLS | √     | √      | √           |
-| Chứng chỉ TLS gia hạn tự động | √     | √      | √           |
-| Số người trực tuyến    | √     | √      | √           |
-| Hạn chế người dùng trực tuyến    | √     | √      | √           |
-| Quy tắc kiểm toán      | √     | √      | √           |
-| Giới hạn tốc độ nút         | √     | √      | √           |
-| Theo giới hạn tốc độ người dùng    | √     | √      | √           |
-| DNS tùy chỉnh    | √     | √      | √           |
+| Báo cáo thông tin máy chủ        | √     | √      | √           |
+| Tự động đăng ký chứng chỉ TLS    | √     | √      | √           |
+| Gia hạn chứng chỉ TLS tự động    | √     | √      | √           |
+| Thống kê số người trực tuyến     | √     | √      | √           |
+| Hạn chế số người dùng trực tuyến | √     | √      | √           |
+| Quy tắc kiểm toán                | √     | √      | √           |
+| Giới hạn tốc độ Node             | √     | √      | √           |
+| DNS tùy chỉnh                    | √     | √      | √           |
 
 ## Hỗ trợ Panel 
 
-| Panel                                                     | v2ray | trojan | shadowsocks             |
-|--------------------------------------------------------|-------|--------|-------------------------|
-| sspanel                                            | √     | √      | √ |
-| v2board                                                | √     | √      | √                       |
-| [PMPanel](https://github.com/ByteInternetHK/PMPanel)   | √     | √      | √                       |
-| [ProxyPanel](https://github.com/ProxyPanel/ProxyPanel) | √     | √      | √                       |
-| [XPanel](https://github.com/zeronxdev/XPanel)   | √     | √      | √                       |
-| [BunPanel](https://github.com/pennyMorant/bunpanel-release)   | √     | √      | √                       |
+| Panel                                                         | v2ray | trojan | shadowsocks      |
+|---------------------------------------------------------------|-------|--------|------------------|
+| [XPanel](https://github.com/zeronxdev/XPanel)                 | √     | √      | √                |
+| v2board                                                       | √     | √      | √                |
+| sspanel                                                       | √     | √      | √                |
+| [PMPanel](https://github.com/ByteInternetHK/PMPanel)          | √     | √      | √                |
+| [ProxyPanel](https://github.com/ProxyPanel/ProxyPanel)        | √     | √      | √                |
+| [BunPanel](https://github.com/pennyMorant/bunpanel-release)   | √     | √      | √                |
 
 ## Cài đặt phần mềm
 
@@ -77,9 +78,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/zeronxdev/NodeX-install/main/i
 
 [Hướng dẫn chi tiết](https://xrayr-project.github.io/XrayR-doc/)
 
-## Thanks
+## TELEGRAM ADMIN
 
-* [Project X](https://github.com/XTLS/)
-* [V2Fly](https://github.com/v2fly)
-* [VNet-V2ray](https://github.com/ProxyPanel/VNet-V2ray)
-* [Air-Universe](https://github.com/crossfw/Air-Universe)
+* [@ZeronXDEV](https://t.me/zeronxdev)

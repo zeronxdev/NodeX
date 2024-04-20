@@ -1,20 +1,20 @@
-package gov2panel_test
+package Xpanel_test
 
 import (
 	"testing"
 
 	"github.com/wyx2685/XrayR/api"
-	"github.com/wyx2685/XrayR/api/gov2panel"
+	"github.com/wyx2685/XrayR/api/Xpanel"
 )
 
 func CreateClient() api.API {
 	apiConfig := &api.Config{
-		APIHost:  "http://localhost:8080",
-		Key:      "123456",
+		APIHost:  "http://localhost:9897",
+		Key:      "qwertyuiopasdfghjkl",
 		NodeID:   1,
 		NodeType: "V2ray",
 	}
-	client := gov2panel.New(apiConfig)
+	client := Xpanel.New(apiConfig)
 	return client
 }
 
@@ -34,7 +34,7 @@ func TestGetSSNodeInfo(t *testing.T) {
 		NodeID:   1,
 		NodeType: "Shadowsocks",
 	}
-	client := gov2panel.New(apiConfig)
+	client := Xpanel.New(apiConfig)
 	nodeInfo, err := client.GetNodeInfo()
 	if err != nil {
 		t.Error(err)
@@ -49,7 +49,7 @@ func TestGetTrojanNodeInfo(t *testing.T) {
 		NodeID:   1,
 		NodeType: "Trojan",
 	}
-	client := gov2panel.New(apiConfig)
+	client := Xpanel.New(apiConfig)
 	nodeInfo, err := client.GetNodeInfo()
 	if err != nil {
 		t.Error(err)
@@ -78,8 +78,8 @@ func TestReportReportUserTraffic(t *testing.T) {
 	for i, userInfo := range *userList {
 		generalUserTraffic[i] = api.UserTraffic{
 			UID:      userInfo.UID,
-			Upload:   1111,
-			Download: 2222,
+			Upload:   114514,
+			Download: 114514,
 		}
 	}
 	// client.Debug()

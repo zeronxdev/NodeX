@@ -1,4 +1,4 @@
-package gov2panel
+package Xpanel
 
 import (
 	"bufio"
@@ -12,11 +12,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/bitly/go-simplejson"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/bitly/go-simplejson"
 	"github.com/go-resty/resty/v2"
-	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/infra/conf"
 
@@ -25,18 +24,19 @@ import (
 
 // APIClient create an api client to the panel.
 type APIClient struct {
-	client        *resty.Client
-	APIHost       string
-	NodeID        int
-	Key           string
-	NodeType      string
-	EnableVless   bool
-	VlessFlow     string
-	SpeedLimit    float64
-	DeviceLimit   int
-	LocalRuleList []api.DetectRule
-	resp          atomic.Value
-	eTags         map[string]string
+	client           *resty.Client
+	APIHost          string
+	NodeID           int
+	Key              string
+	NodeType         string
+	EnableVless      bool
+	VlessFlow        string
+	SpeedLimit       float64
+	DeviceLimit      int
+	LocalRuleList    []api.DetectRule
+	LastReportOnline map[int]int
+	resp             atomic.Value
+	eTags            map[string]string
 }
 
 // New create an api instance
@@ -56,10 +56,19 @@ func New(apiConfig *api.Config) *APIClient {
 		}
 	})
 	client.SetBaseURL(apiConfig.APIHost)
+
 	// Create Key for each requests
+	nodeType_for_requests := func() string {
+		if apiConfig.NodeType == "V2ray" && apiConfig.EnableVless {
+			return "vless"
+		} else {
+			return apiConfig.NodeType
+		}
+	}()
+
 	client.SetQueryParams(map[string]string{
 		"node_id":   strconv.Itoa(apiConfig.NodeID),
-		"node_type": strings.ToLower(apiConfig.NodeType),
+		"node_type": strings.ToLower(nodeType_for_requests),
 		"token":     apiConfig.Key,
 	})
 	// Read local rule list
@@ -87,13 +96,12 @@ func readLocalRuleList(path string) (LocalRuleList []api.DetectRule) {
 	if path != "" {
 		// open the file
 		file, err := os.Open(path)
-		defer file.Close()
 		// handle errors while opening
 		if err != nil {
 			log.Printf("Error when opening file: %s", err)
 			return LocalRuleList
 		}
-
+		defer file.Close()
 		fileScanner := bufio.NewScanner(file)
 
 		// read line by line
@@ -147,7 +155,7 @@ func (c *APIClient) parseResponse(res *resty.Response, path string, err error) (
 // GetNodeInfo will pull NodeInfo Config from panel
 func (c *APIClient) GetNodeInfo() (nodeInfo *api.NodeInfo, err error) {
 	server := new(serverConfig)
-	path := "/api/server/config"
+	path := "/api/v1/server/XProxy/config"
 
 	res, err := c.client.R().
 		SetHeader("If-None-Match", c.eTags["node"]).
@@ -170,7 +178,7 @@ func (c *APIClient) GetNodeInfo() (nodeInfo *api.NodeInfo, err error) {
 	b, _ := nodeInfoResp.Encode()
 	json.Unmarshal(b, server)
 
-	if gconv.Uint32(server.Port) == 0 {
+	if server.ServerPort == 0 {
 		return nil, errors.New("server port must > 0")
 	}
 
@@ -197,7 +205,7 @@ func (c *APIClient) GetNodeInfo() (nodeInfo *api.NodeInfo, err error) {
 // GetUserList will pull user form panel
 func (c *APIClient) GetUserList() (UserList *[]api.UserInfo, err error) {
 	var users []*user
-	path := "/api/server/user"
+	path := "/api/v1/server/XProxy/user"
 
 	switch c.NodeType {
 	case "V2ray", "Trojan", "Shadowsocks":
@@ -230,26 +238,50 @@ func (c *APIClient) GetUserList() (UserList *[]api.UserInfo, err error) {
 		return nil, errors.New("users is null")
 	}
 
-	userList := make([]api.UserInfo, len(users))
-	for i := 0; i < len(users); i++ {
+	var deviceLimit, localDeviceLimit int = 0, 0
+	var userList []api.UserInfo
+	for _, user := range users {
 		u := api.UserInfo{
-			UID:  users[i].Id,
-			UUID: users[i].Uuid,
+			UID:  user.Id,
+			UUID: user.Uuid,
 		}
-
 		// Support 1.7.1 speed limit
 		if c.SpeedLimit > 0 {
 			u.SpeedLimit = uint64(c.SpeedLimit * 1000000 / 8)
 		} else {
-			u.SpeedLimit = uint64(users[i].SpeedLimit * 1000000 / 8)
+			u.SpeedLimit = uint64(user.SpeedLimit * 1000000 / 8)
+		}
+		//Prefer local config
+		if c.DeviceLimit > 0 {
+			deviceLimit = c.DeviceLimit
+		} else {
+			deviceLimit = user.DeviceLimit
 		}
 
-		u.DeviceLimit = c.DeviceLimit // todo waiting v2board send configuration
-		u.Email = u.UUID + "@gov2panel.user"
+		// If there is still device available, add the user
+		if deviceLimit > 0 && user.AliveIp > 0 {
+			lastOnline := 0
+			if v, ok := c.LastReportOnline[user.Id]; ok {
+				lastOnline = v
+			}
+			// If there are any available device.
+			if localDeviceLimit = deviceLimit - user.AliveIp + lastOnline; localDeviceLimit > 0 {
+				deviceLimit = localDeviceLimit
+				// If this backend server has reported any user in the last reporting period.
+			} else if lastOnline > 0 {
+				deviceLimit = lastOnline
+				// Remove this user.
+			} else {
+				continue
+			}
+		}
+		u.DeviceLimit = deviceLimit
+		u.Email = u.UUID + "@v2board.user"
 		if c.NodeType == "Shadowsocks" {
 			u.Passwd = u.UUID
 		}
-		userList[i] = u
+
+		userList = append(userList, u)
 	}
 
 	return &userList, nil
@@ -257,9 +289,15 @@ func (c *APIClient) GetUserList() (UserList *[]api.UserInfo, err error) {
 
 // ReportUserTraffic reports the user traffic
 func (c *APIClient) ReportUserTraffic(userTraffic *[]api.UserTraffic) error {
-	path := "/api/server/push"
+	path := "/api/v1/server/XProxy/push"
 
-	res, err := c.client.R().SetBody(userTraffic).ForceContentType("application/json").Post(path)
+	// json structure: {uid1: [u, d], uid2: [u, d], uid1: [u, d], uid3: [u, d]}
+	data := make(map[int][]int64, len(*userTraffic))
+	for _, traffic := range *userTraffic {
+		data[traffic.UID] = []int64{traffic.Upload, traffic.Download}
+	}
+
+	res, err := c.client.R().SetBody(data).ForceContentType("application/json").Post(path)
 	_, err = c.parseResponse(res, path, err)
 	if err != nil {
 		return err
@@ -276,7 +314,6 @@ func (c *APIClient) GetNodeRule() (*[]api.DetectRule, error) {
 
 	for i := range routes {
 		if routes[i].Action == "block" {
-
 			ruleList = append(ruleList, api.DetectRule{
 				ID:      i,
 				Pattern: regexp.MustCompile(strings.Join(routes[i].Match, "|")),
@@ -294,6 +331,27 @@ func (c *APIClient) ReportNodeStatus(nodeStatus *api.NodeStatus) (err error) {
 
 // ReportNodeOnlineUsers implements the API interface
 func (c *APIClient) ReportNodeOnlineUsers(onlineUserList *[]api.OnlineUser) error {
+	reportOnline := make(map[int]int)
+	data := make(map[int][]string)
+	for _, onlineuser := range *onlineUserList {
+		// json structure: { UID1:["ip1","ip2"],UID2:["ip3","ip4"] }
+		data[onlineuser.UID] = append(data[onlineuser.UID], onlineuser.IP)
+		if _, ok := reportOnline[onlineuser.UID]; ok {
+			reportOnline[onlineuser.UID]++
+		} else {
+			reportOnline[onlineuser.UID] = 1
+		}
+	}
+	c.LastReportOnline = reportOnline // Update LastReportOnline
+
+	path := "/api/v1/server/XProxy/alive"
+	res, err := c.client.R().SetBody(data).ForceContentType("application/json").Post(path)
+	_, err = c.parseResponse(res, path, err)
+	// 面板无对应接口时先不报错
+	if err != nil {
+		return nil
+	}
+
 	return nil
 }
 
@@ -304,15 +362,47 @@ func (c *APIClient) ReportIllegal(detectResultList *[]api.DetectResult) error {
 
 // parseTrojanNodeResponse parse the response for the given nodeInfo format
 func (c *APIClient) parseTrojanNodeResponse(s *serverConfig) (*api.NodeInfo, error) {
+	var (
+		host   string
+		header json.RawMessage
+	)
+	transportProtocol := func() string {
+		if s.Network == "" {
+			return "tcp"
+		} else {
+			return s.Network
+		}
+	}()
+	switch transportProtocol {
+	case "ws":
+		if s.NetworkSettings.Headers != nil {
+			if httpHeader, err := s.NetworkSettings.Headers.MarshalJSON(); err != nil {
+				return nil, err
+			} else {
+				b, _ := simplejson.NewJson(httpHeader)
+				host = b.Get("Host").MustString()
+			}
+		}
+	case "tcp":
+		if s.NetworkSettings.Header != nil {
+			if httpHeader, err := s.NetworkSettings.Header.MarshalJSON(); err != nil {
+				return nil, err
+			} else {
+				header = httpHeader
+			}
+		}
+	}
 	// Create GeneralNodeInfo
 	nodeInfo := &api.NodeInfo{
 		NodeType:          c.NodeType,
 		NodeID:            c.NodeID,
-		Port:              gconv.Uint32(s.Port),
-		TransportProtocol: "tcp",
+		Port:              uint32(s.ServerPort),
+		TransportProtocol: transportProtocol,
+		Path:              s.NetworkSettings.Path,
 		EnableTLS:         true,
-		Host:              s.Host,
-		ServiceName:       s.Sni,
+		Host:              host,
+		Header:            header,
+		ServiceName:       s.NetworkSettings.ServiceName,
 		NameServerConfig:  s.parseDNSConfig(),
 	}
 	return nodeInfo, nil
@@ -340,9 +430,9 @@ func (c *APIClient) parseSSNodeResponse(s *serverConfig) (*api.NodeInfo, error) 
 	return &api.NodeInfo{
 		NodeType:          c.NodeType,
 		NodeID:            c.NodeID,
-		Port:              gconv.Uint32(s.Port),
+		Port:              uint32(s.ServerPort),
 		TransportProtocol: "tcp",
-		CypherMethod:      s.Encryption,
+		CypherMethod:      s.Cipher,
 		ServerKey:         s.ServerKey, // shadowsocks2022 share key
 		NameServerConfig:  s.parseDNSConfig(),
 		Header:            header,
@@ -352,39 +442,80 @@ func (c *APIClient) parseSSNodeResponse(s *serverConfig) (*api.NodeInfo, error) 
 // parseV2rayNodeResponse parse the response for the given nodeInfo format
 func (c *APIClient) parseV2rayNodeResponse(s *serverConfig) (*api.NodeInfo, error) {
 	var (
-		header    json.RawMessage
-		enableTLS bool
+		host          string
+		header        json.RawMessage
+		enableTLS     bool
+		enableREALITY bool
+		dest          string
 	)
-
-	switch s.Net {
+	if s.TlsSettings.Dest != "" {
+		dest = s.TlsSettings.Dest
+	} else {
+		dest = s.TlsSettings.Sni
+	}
+	realityconfig := api.REALITYConfig{
+		Dest:             dest + ":" + s.TlsSettings.ServerPort,
+		ProxyProtocolVer: s.TlsSettings.Xver,
+		ServerNames:      []string{s.TlsSettings.Sni},
+		PrivateKey:       s.TlsSettings.PrivateKey,
+		ShortIds:         []string{s.TlsSettings.ShortId},
+	}
+	switch s.Network {
+	case "ws":
+		if s.NetworkSettings.Headers != nil {
+			if httpHeader, err := s.NetworkSettings.Headers.MarshalJSON(); err != nil {
+				return nil, err
+			} else {
+				b, _ := simplejson.NewJson(httpHeader)
+				host = b.Get("Host").MustString()
+			}
+		}
 	case "tcp":
-		if s.Header != nil {
-			if httpHeader, err := s.Header.MarshalJSON(); err != nil {
+		if s.NetworkSettings.Header != nil {
+			if httpHeader, err := s.NetworkSettings.Header.MarshalJSON(); err != nil {
 				return nil, err
 			} else {
 				header = httpHeader
 			}
 		}
+	case "h2":
+		if s.NetworkSettings.Header != nil {
+			if httpHeader, err := s.NetworkSettings.Header.MarshalJSON(); err != nil {
+				return nil, err
+			} else {
+				header = httpHeader
+			}
+		}
+		if s.NetworkSettings.Host != "" {
+			host = s.NetworkSettings.Host
+		} else {
+			host = "www.example.com"
+		}
 	}
 
-	if s.TLS == "tls" {
+	if s.Tls != 0 {
 		enableTLS = true
+		if s.Tls == 2 {
+			enableREALITY = true
+		}
 	}
 
 	// Create GeneralNodeInfo
 	return &api.NodeInfo{
 		NodeType:          c.NodeType,
 		NodeID:            c.NodeID,
-		Port:              gconv.Uint32(s.Port),
+		Port:              uint32(s.ServerPort),
 		AlterID:           0,
-		TransportProtocol: s.Net,
+		TransportProtocol: s.Network,
 		EnableTLS:         enableTLS,
-		Path:              s.Path,
-		Host:              s.Host,
+		Path:              s.NetworkSettings.Path,
+		Host:              host,
 		EnableVless:       c.EnableVless,
-		VlessFlow:         c.VlessFlow,
-		ServiceName:       s.Sni,
+		VlessFlow:         s.VlessFlow,
+		ServiceName:       s.NetworkSettings.ServiceName,
 		Header:            header,
+		EnableREALITY:     enableREALITY,
+		REALITYConfig:     &realityconfig,
 		NameServerConfig:  s.parseDNSConfig(),
 	}, nil
 }
