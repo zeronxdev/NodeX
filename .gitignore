@@ -11,8 +11,8 @@ gen
 *.out
 go.work
 main
-XrayR
-XrayR*
+NodeX
+NodeX*
 access.log
 error.log
 .lego

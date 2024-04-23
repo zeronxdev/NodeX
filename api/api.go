@@ -1,4 +1,4 @@
-// Package api contains all the api used by XrayR
+// Package api contains all the api used by NodeX
 // To implement an api , one needs to implement the interface below.
 
 package api

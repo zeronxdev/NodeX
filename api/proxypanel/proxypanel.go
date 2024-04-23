@@ -396,7 +396,7 @@ func (c *APIClient) ReportIllegal(detectResultList *[]api.DetectResult) error {
 			SetBody(IllegalReport{
 				RuleID: r.RuleID,
 				UID:    r.UID,
-				Reason: "XrayR cannot save reason",
+				Reason: "NodeX cannot save reason",
 			}).
 			SetResult(&Response{}).
 			ForceContentType("application/json").
