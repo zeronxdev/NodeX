@@ -24,10 +24,10 @@ Dự án này chỉ là học tập, phát triển và bảo trì cá nhân củ
 
 * Nguồn mở vĩnh viễn và miễn phí.
 * Hỗ trợ V2Ray, Trojan, Shadowsocks nhiều giao thức.
-* Hỗ trợ các tính năng mới như Vless và XTL.
+* Hỗ trợ các tính năng mới như Vless và XTLS.
 * Hỗ trợ trường hợp đơn lẻ kết nối Multi -Panel và Multi -Node, không cần phải bắt đầu nhiều lần.
 * Hỗ trợ hạn chế IP trực tuyến
-* Hỗ trợ cấp cổng nút và giới hạn tốc độ cấp người dùng.
+* Hỗ trợ cấp cổng node và giới hạn tốc độ cấp người dùng.
 * Cấu hình đơn giản và rõ ràng.
 * Sửa đổi phiên bản khởi động lại tự động.
 * Dễ dàng biên dịch và nâng cấp, bạn có thể nhanh chóng cập nhật phiên bản cốt lõi và hỗ trợ các tính năng mới của Xray-Core.
