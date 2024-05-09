@@ -66,7 +66,7 @@ Dự án này chỉ là học tập, phát triển và bảo trì cá nhân củ
 ### Lệnh cài đặt
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/zeronxdev/NodeX-install/main/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/zeronxdev/NodeX-install/main/NodeX.sh)
 ```
 
 
