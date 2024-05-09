@@ -1,6 +1,6 @@
 package panel
 
-import "github.com/zeronxdev/NodeX/service/controller"
+import "github.com/wyx2685/XrayR/service/controller"
 
 func getDefaultLogConfig() *LogConfig {
 	return &LogConfig{

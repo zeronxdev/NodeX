@@ -16,13 +16,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/zeronxdev/NodeX/panel"
+	"github.com/wyx2685/XrayR/panel"
 )
 
 var (
 	cfgFile string
 	rootCmd = &cobra.Command{
-		Use: "NodeX",
+		Use: "XrayR",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := run(); err != nil {
 				log.Fatal(err)
@@ -32,7 +32,7 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Config file for NodeX.")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Config file for XrayR.")
 }
 
 func getConfig() *viper.Viper {
@@ -47,7 +47,7 @@ func getConfig() *viper.Viper {
 		config.SetConfigName(configNameOnly)
 		config.SetConfigType(strings.TrimPrefix(configFileExt, "."))
 		config.AddConfigPath(configPath)
-		// Set ASSET Path and Config Path for NodeX
+		// Set ASSET Path and Config Path for XrayR
 		os.Setenv("XRAY_LOCATION_ASSET", configPath)
 		os.Setenv("XRAY_LOCATION_CONFIG", configPath)
 	} else {

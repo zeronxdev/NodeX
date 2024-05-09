@@ -1,4 +1,4 @@
-// Package service contains all the services used by NodeX
+// Package service contains all the services used by XrayR
 // To implement a service, one needs to implement the interface below.
 package service
 

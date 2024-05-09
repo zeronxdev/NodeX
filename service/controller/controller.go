@@ -15,10 +15,10 @@ import (
 	"github.com/xtls/xray-core/features/routing"
 	"github.com/xtls/xray-core/features/stats"
 
-	"github.com/zeronxdev/NodeX/api"
-	"github.com/zeronxdev/NodeX/app/mydispatcher"
-	"github.com/zeronxdev/NodeX/common/mylego"
-	"github.com/zeronxdev/NodeX/common/serverstatus"
+	"github.com/wyx2685/XrayR/api"
+	"github.com/wyx2685/XrayR/app/mydispatcher"
+	"github.com/wyx2685/XrayR/common/mylego"
+	"github.com/wyx2685/XrayR/common/serverstatus"
 )
 
 type LimitInfo struct {
@@ -592,7 +592,7 @@ func (c *Controller) userInfoMonitor() (err error) {
 		var nocountUID = make(map[int]struct{})
 		for _, traffic := range userTraffic {
 			total := traffic.Upload + traffic.Download
-			if total < int64(c.config.DeviceOnlineMinTraffic*1) {
+			if total < int64(c.config.DeviceOnlineMinTraffic*1000) {
 				nocountUID[traffic.UID] = struct{}{}
 			}
 		}

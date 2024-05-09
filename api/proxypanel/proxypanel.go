@@ -14,7 +14,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/zeronxdev/NodeX/api"
+	"github.com/wyx2685/XrayR/api"
 )
 
 // APIClient create a api client to the panel.
@@ -396,7 +396,7 @@ func (c *APIClient) ReportIllegal(detectResultList *[]api.DetectResult) error {
 			SetBody(IllegalReport{
 				RuleID: r.RuleID,
 				UID:    r.UID,
-				Reason: "NodeX cannot save reason",
+				Reason: "XrayR cannot save reason",
 			}).
 			SetResult(&Response{}).
 			ForceContentType("application/json").

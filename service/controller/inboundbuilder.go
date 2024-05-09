@@ -15,8 +15,8 @@ import (
 	"github.com/xtls/xray-core/core"
 	"github.com/xtls/xray-core/infra/conf"
 
-	"github.com/zeronxdev/NodeX/api"
-	"github.com/zeronxdev/NodeX/common/mylego"
+	"github.com/wyx2685/XrayR/api"
+	"github.com/wyx2685/XrayR/common/mylego"
 )
 
 // InboundBuilder build Inbound config for different protocol
@@ -211,8 +211,10 @@ func InboundBuilder(config *Config, nodeInfo *api.NodeInfo, tag string) (*core.I
 			return nil, fmt.Errorf("marshal dest %s config fialed: %s", dest, err)
 		}
 		streamSetting.Security = "reality"
-		private_key := nodeInfo.REALITYConfig.PrivateKey
-		if private_key == "" {
+		var private_key string
+		if nodeInfo.REALITYConfig != nil {
+			private_key = nodeInfo.REALITYConfig.PrivateKey
+		} else {
 			private_key = config.REALITYConfigs.PrivateKey
 		}
 		streamSetting.REALITYSettings = &conf.REALITYConfig{

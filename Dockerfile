@@ -4,17 +4,17 @@ WORKDIR /app
 COPY . .
 ENV CGO_ENABLED=0
 RUN go mod download \
-    && go build -v -o NodeX -trimpath -ldflags "-s -w -buildid="
+    && go build -v -o XrayR -trimpath -ldflags "-s -w -buildid="
 
 # Release
 FROM alpine:latest
 # 安装必要的工具包
 RUN apk --update --no-cache add curl tzdata ca-certificates \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && mkdir /etc/NodeX/ \
-    && curl -L "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat" -o /etc/NodeX/geoip.dat \
-    && curl -L "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat" -o /etc/NodeX/geosite.dat
+    && mkdir /etc/XrayR/ \
+    && curl -L "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat" -o /etc/XrayR/geoip.dat \
+    && curl -L "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat" -o /etc/XrayR/geosite.dat
 
-COPY --from=builder /app/NodeX /usr/local/bin
+COPY --from=builder /app/XrayR /usr/local/bin
 
-ENTRYPOINT [ "NodeX", "--config", "/etc/NodeX/config.yml"]
+ENTRYPOINT [ "XrayR", "--config", "/etc/XrayR/config.yml"]

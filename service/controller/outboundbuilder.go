@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/core"
 	"github.com/xtls/xray-core/infra/conf"
 
-	"github.com/zeronxdev/NodeX/api"
+	"github.com/wyx2685/XrayR/api"
 )
 
 // OutboundBuilder build freedom outbound config for addOutbound
@@ -17,12 +16,8 @@ func OutboundBuilder(config *Config, nodeInfo *api.NodeInfo, tag string) (*core.
 	outboundDetourConfig.Protocol = "freedom"
 	outboundDetourConfig.Tag = tag
 
-	// Build Send IP address
-	if config.SendIP != "" {
-		ipAddress := net.ParseAddress(config.SendIP)
-		sendthoughaddress := ipAddress.String()
-		outboundDetourConfig.SendThrough = &sendthoughaddress
-	}
+	// SendThrough setting
+	outboundDetourConfig.SendThrough = &config.SendIP
 
 	// Freedom Protocol setting
 	var domainStrategy = "Asis"

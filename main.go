@@ -2,7 +2,7 @@ package main
 
 import (
 	log "github.com/sirupsen/logrus"
-	"github.com/zeronxdev/NodeX/cmd"
+	"github.com/wyx2685/XrayR/cmd"
 )
 
 func main() {
